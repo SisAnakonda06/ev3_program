@@ -16,7 +16,7 @@ import MotorPair
     Port A - motr levý
     Port B - None
     Port C - None
-    Port D - Pravý pravý"""
+    Port D - Pravý pravý""" 
 
 import gc
 gc.enable()
