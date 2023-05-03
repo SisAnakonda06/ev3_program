@@ -52,6 +52,16 @@ def go_forw(speed:int, distance: int):
 def go_back(speed: int, distance: int):
     motor_l.run_time(-calculate(35.5, speed, distance, "speed"), calculate(35.5, speed, distance, "distance"), then=Stop.HOLD, wait=True)
     motor_r.run_time(-calculate(35.5, speed, distance, "speed"), calculate(35.5, speed, distance, "distance"), then=Stop.HOLD, wait=True)
+def handle_ending_condition(ending_condition: str, value: int):
+    print("ending")
+    global gyro
+    if first_time:
+        if ending_condition == "angle":
+            direction = sign(value - gyro)
+    if ending_condition == "angle":
+        if (value - gyro) * direction < 0:
+            first_time = True
+            return True
 def turn(ending_condition: int, value: int, max_speed: int, min_speed: int, left: bool, right: bool, precise: bool, stop: bool) -> None:
 
     """ Robot bude zatacet 
@@ -67,29 +77,27 @@ def turn(ending_condition: int, value: int, max_speed: int, min_speed: int, left
         precise -- Ma se robot dorovnavat? \n
         stop -- Ma ro bot na konci zastavit?
     """
-   
+    print("ahoj")
     global motor_l
     global motor_r
     global gyro_port
     gyro_port = Port.S2
     gyro = GyroSensor(gyro_port)
     gyro = gyro.angle()
-    if ending_condition == "angle":
-            direction = sign(value - gyro)
-            stop_handle = True
+    i = 0
     # Konstanta P
     k_p = 0.015
-
+    handle = False
+    print("ahoj")
+    direction = sign(value - gyro)
     # Zatacet dvakrat - jednou prestreli, jednou se dorovna
     for i in range(2):
         # Vypocita o kolik jede robot spatne
         error = value - gyro 
-
+        print(handle_ending_condition(edning_condition, value))
         # Dokud nema otaceni skoncit, nebo neni jizda prerusena
-        while not stop_handle:
-            if ending_condition == "angle":
-                direction = sign(value - gyro)
-                stop_handle = True
+        while not handle_ending_condition(edning_condition, value):
+            print("ahoj")
             # Vypocita o kolik jede robot spatne
             error = value - gyro 
             
@@ -109,9 +117,10 @@ def turn(ending_condition: int, value: int, max_speed: int, min_speed: int, left
             
             # Spustit motory
             motors.start_tank(speed * left, -speed * right) 
-            motor_l.run(speed*left)
+            motor_l.run(speed * left)
             motor_r.run(-speed * right)
-            
+
+            yield
 
         # Jestli se robot nema zarovnavat preskocit zarovnavani
         if not precise:
@@ -122,7 +131,7 @@ def turn(ending_condition: int, value: int, max_speed: int, min_speed: int, left
         motor_l.brake()
         motor_r.brake()
         # Zastavit motory
-        motor_l.stop() 
+        motor_l.stop()
         motor_r.stop() 
 
     
