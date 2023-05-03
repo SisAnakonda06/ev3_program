@@ -148,3 +148,6 @@ def stop(type_brake):
     elif type_brake == "hold":
         motor_l.hold()
         motor_r.hold()
+def get_get_degrees_counted():
+    global motor_l
+    global motor_r
