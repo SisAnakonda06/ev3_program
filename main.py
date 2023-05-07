@@ -11,6 +11,14 @@ from pybricks.tools import wait
 from pybricks.robotics import DriveBase
 from utime import ticks_diff, ticks_ms # type: ignore
 import get_bricks
+a_b_1 = False
+a_b_2 = False
+a_b_3 = False
+a_b_4 = False
+a_w_1 = False
+a_w_2 = False
+a_w_3 = False
+a_w_4 = False
 class Timer():
     """Replacement Timer class that allows decimal points so we can measure times of less than one second."""
     def __init__(self):
@@ -36,8 +44,8 @@ color = ColorSensor(Port.S1)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=130)
 
 # Calculate the light threshold. Choose values based on your measurements.
-BLACK = 3
-WHITE = 48
+BLACK = 11
+WHITE = 72
 threshold = (BLACK + WHITE) / 2
 direction = 0
 
@@ -206,8 +214,8 @@ def turn(ending_condition: int, value: int, max_speed: int, min_speed: int, left
 
         robot.stop()
 
-b_block = 50
-m_block = 100
+b_block = 13
+m_block = 33
 
 def get_bricks():
     global robot
@@ -216,13 +224,17 @@ def get_bricks():
     global m_block
     robot.reset()
     robot.drive(100, 0)
-    round_r = 0
-    places = 0
+    b_block = b_block
+    m_block = m_block 
     stop = False
-    a_1 = False
-    a_2 = False
-    a_3 = False
-    a_4 = False
+    global a_b_1
+    global a_b_2
+    global a_b_3
+    global a_b_4
+    global a_w_1
+    global a_w_2
+    global a_w_3
+    global a_w_4 
     a_black = False
     a_white = False
     end_st = b_block + m_block
@@ -239,30 +251,81 @@ def get_bricks():
 
     color = ColorSensor(Port.S1)
     while not stop:
-        print(robot.distance(), start_nd)
-        if color.color() == Color.BLACK:
-            print("a")
-            if robot.distance() > start_st and robot.distance() < end_st:
-                ev3 = EV3Brick()
-                ev3.speaker.beep()
-                a_b_1 = True
-            if robot.distance() > start_nd and robot.distance() < end_nd:
-                ev3 = EV3Brick()
-                ev3.speaker.beep()
-                a_b_2 = True
-            if robot.distance() > start_rd and robot.distance() < end_rd:
-                ev3 = EV3Brick()
-                ev3.speaker.beep()
-                a_b_3 = True 
-            if robot.distance() > start_th and robot.distance() < end_th:
-                ev3 = EV3Brick()
-                ev3.speaker.beep()
-                a_b_4 = True
-            
-        if a_black == True and a_white == True:
-            robot.stop()
-            stop = True
-
+        barva = color.reflection()
+        if barva < 20 and barva > 4:
+            #print("WA")
+            wait(100)
+            #print("IT")
+            barva = color.reflection()
+            if (barva < 20 and barva > 4):
+                print("black")
+                if robot.distance() > start_st and robot.distance() < end_st and not a_black:
+                    
+                    ev3 = EV3Brick()
+                    ev3.speaker.beep()
+                    a_b_1 = True
+                    a_black = True
+                
+                if robot.distance() > start_nd and robot.distance() < end_nd and not a_black:
         
+                    ev3 = EV3Brick()
+                    ev3.speaker.beep()
+                    a_b_2 = True
+                    a_black = True
+                
+                if robot.distance() > start_rd and robot.distance() < end_rd and not a_black:
+                    ev3 = EV3Brick()
+                    ev3.speaker.beep()
+                    a_b_3 = True 
+                    a_black = True
+                
+                if robot.distance() > start_th and robot.distance() < end_th and not a_black:
+                    ev3 = EV3Brick()
+                    ev3.speaker.beep()
+                    a_b_4 = True
+                    a_black = True
+
+        elif barva > 20 and barva < 100:
+            print("white")
+            if robot.distance() > start_st and robot.distance() < end_st and not a_white:
+                ev3 = EV3Brick()
+                ev3.speaker.beep(100, 100)
+                a_w_1 = True
+                a_white = True
+            
+            if robot.distance() > start_nd and robot.distance() < end_nd and not a_white:
+                ev3 = EV3Brick()
+                ev3.speaker.beep(100, 100)
+                a_w_2 = True
+                a_white = True
+            
+            if robot.distance() > start_rd and robot.distance() < end_rd and not a_white:
+                ev3 = EV3Brick()
+                ev3.speaker.beep(100, 100)
+                a_w_3 = True 
+                a_white = True
+            
+            if robot.distance() > start_th and robot.distance() < end_th and not a_white:
+                ev3 = EV3Brick()
+                ev3.speaker.beep(100, 100)
+                a_w_4 = True
+                a_white = True
+
+
+
+
+def bricks():
+    while True:
+
+        # if color.color() == Color.BLACK:
+        #     ev3.speaker.beep(100, 100)
+        # if color.color() == Color.WHITE:
+        #     ev3.speaker.beep()
+        print(color.reflection())
+        
+
 get_bricks()
-print("3")
+
+# print("   BLACK    \n první  - ", a_b_1, "\n druhý  - ", a_b_2, "\n třetí  - ", a_b_3, "\n čtvrtý - ", a_b_4)
+
+# print("   WHITE    \n první  - ", a_w_1, "\n druhý  - ", a_w_2, "\n třetí  - ", a_w_3, "\n čtvrtý - ", a_w_4)
