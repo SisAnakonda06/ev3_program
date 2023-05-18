@@ -13,6 +13,8 @@ from utime import ticks_diff, ticks_ms # type: ignore
 import get_bricks
 a = [None, None]
 b = [None, None]
+attc = Motor(Port.B)
+attc2 = Motor(Port.C)
 class Timer():
     """Replacement Timer class that allows decimal points so we can measure times of less than one second."""
     def __init__(self):
@@ -101,7 +103,7 @@ k_p = 1
 k_d = 0.1
 first_time = True
 
-def go_straight(ending_condition:str, value:int, speed:int, stop:bool):
+def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool):
     while not handle_ending_condition(ending_condition, value):
         global i
         global k_i
@@ -136,7 +138,8 @@ def go_straight(ending_condition:str, value:int, speed:int, stop:bool):
 
         pid = p + i + d
 
-        
+        if not line:
+            pid = 0
         robot.drive(speed*10, pid)
 
     # You can wait for a short time or do other things in this loop.
@@ -307,25 +310,26 @@ def get_bricks():
                 white = True
 
         print(a, b)
+       
 
         if white == True and black == True:
             print("ahoj")
-            if a == [None, None] and robot.distance() > 200:
+            if a == [None, None] and robot.distance() > 270:
                 print("a")
                 a_white = c_white
                 a_black = c_black
                 a = [c_white, c_black]
                 c_white = 0
                 c_black = 0
-
                 white = False
                 black = False
                 robot.reset()
+          
             elif b == [None, None]:
                 print("b1")
                 if a != [None, None]:
                     print("b2")
-                    if robot.distance() > 271:
+                    if robot.distance() > 180:
                         print("B3")
                         print("b")
                         b_white = c_white
@@ -352,6 +356,21 @@ def bricks():
         print(color.reflection())
         
 
+go_straight("dist", -10, -10, False, False)
+attc.run_angle(150, -90, Stop.HOLD, True)
+robot.turn(5)
+go_straight("dist", 8, 10, True, False)
+attc.run_angle(200, 90, Stop.HOLD, True)
+
+go_straight("dist", -5,-10,  True, False)
+robot.turn(-30)
+attc.run_angle(200, 110, Stop.HOLD, True)
+go_straight("dist", 5,10,  True, False)
+robot.turn(17)
+go_straight("dist", 8,10,  True, False)
+attc.run_angle(150, -110, Stop.HOLD, True)
+
+# attc2.run_angle(1000, 2000, Stop.HOLD, True)
 
 
-get_bricks()
+
