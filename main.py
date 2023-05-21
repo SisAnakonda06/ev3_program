@@ -66,7 +66,6 @@ def handle_ending_condition(ending_condition, value):
 
     if ending_condition == "dist":
         distance = round(robot.distance()/10)
-        print(value, distance)
         if round(robot.distance()/10)  == value:
             return True
     if ending_condition == "angle":
@@ -98,9 +97,9 @@ last_time = move_timer.now()
     
 last_error = 0
 error = 0
-k_i = 1
-k_p = 1
-k_d = 0.1
+k_i = 2.0
+k_p = 1.5
+k_d = 1.5
 first_time = True
 
 def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool):
@@ -355,22 +354,103 @@ def bricks():
         #     ev3.speaker.beep()
         print(color.reflection())
         
+def brick_dist(brick_count):
+    """Jak daleko ma robot jet aby mohl vylozit kosticky"""
+    if brick_count != 2:
+        return 10
+    elif brick_count == 2:
+        return 14
+    
+# go_straight("dist", -10, -10, False, False)
+# attc.run_angle(150, -95, Stop.HOLD, True)
+# robot.turn(4)
+# go_straight("dist", 7, 10, True, False)
 
-go_straight("dist", -10, -10, False, False)
-attc.run_angle(150, -90, Stop.HOLD, True)
-robot.turn(5)
-go_straight("dist", 8, 10, True, False)
-attc.run_angle(200, 90, Stop.HOLD, True)
 
-go_straight("dist", -5,-10,  True, False)
-robot.turn(-30)
-attc.run_angle(200, 110, Stop.HOLD, True)
-go_straight("dist", 5,10,  True, False)
-robot.turn(17)
-go_straight("dist", 8,10,  True, False)
-attc.run_angle(150, -110, Stop.HOLD, True)
+# attc.run_angle(200, 95, Stop.HOLD, True)
 
-# attc2.run_angle(1000, 2000, Stop.HOLD, True)
+# go_straight("dist", -5,-10,  True, False)
+# robot.turn(-30)
+# attc.run_angle(200, 110, Stop.HOLD, True)
+# go_straight("dist", 5,10,  True, False)
+# robot.turn(17)
+# go_straight("dist", 8,10,  True, False)
+# attc.run_angle(150, -110, Stop.HOLD, True)
+
+# go_straight("dist", -20, -20, True, False)
+# robot.turn(100)
+
+# go_straight("dist", 102, 50, True, True)
+# robot.turn(0)
+brick_count = 0
+# pocitani kolikart jet
+
+while brick_count < 2:
+    print(brick_count)
+    b = [1, 3]
+    # jak daleko ma jet
+    if b[0] == 1 or b[1] == 1 or b[0] == 4 or b[1] == 4:
+        go_straight("dist", brick_dist(brick_count), 10, True, False)
+        # jesli ma jet vpravo
+        if b[0] == 1 or b[1] == 1:
+            robot.turn(-90)
+            # jestli ma vylozit kabel 
+            if b[0] == 1:
+                attc.run_angle(150, -95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                pass
+            # jestli ma vylozit server
+            elif b[1] == 1:
+                attc.run_angle(150, 95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                pass
+        # jestli ma jet vlevo
+        elif b[0] == 4 or b[1] == 4:
+            robot.turn(90)
+            # jsetli ma vylozit kabeli
+            if b[0] == 4:
+                attc.run_angle(150, -95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                pass
+            # jestli ma vylozit servery
+            elif b[1] == 4:
+                attc.run_angle(150, 95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                pass
+    # jak daleko ma jet
+    if b[0] == 2 or b[1] == 2 or b[0] == 3 or b[1] == 3:
+        go_straight("dist", brick_dist(brick_count), 10, True, False)
+        # jestli ma jet v levo
+        if b[0] == 2 or b[1] == 2:
+            robot.turn(-90)
+            # jestli ma vylozit kabely
+            if b[0] == 2:
+                attc.run_angle(150, -95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                
+            # jesli ma vylozit servery
+            elif b[1] == 2:
+                attc.run_angle(150, 95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                
+        # jestli ma jet vpravo
+        elif b[0] == 3 or b[1] == 3:
+            robot.turn(90)
+            # jestli ma vylozit kabely
+            if b[0] == 3 and brick_count != 2:
+                attc.run_angle(150, -95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                
+            # jestli ma vlyozit servery
+            elif b[1] == 3 and brick_count != 2:
+                attc.run_angle(150, 95, Stop.HOLD, True)
+                brick_count = brick_count + 1
+                
+    print(brick_count)
+
+
+
+
 
 
 
