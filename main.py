@@ -15,6 +15,11 @@ a = [None, None]
 b = [None, None]
 attc = Motor(Port.B)
 attc2 = Motor(Port.C)
+def restart_motors(motor):
+    """Function for restart motors angle
+        motor - wich motor for restart"""
+        angle = motor.angle() * -1
+        
 class Timer():
     """Replacement Timer class that allows decimal points so we can measure times of less than one second."""
     def __init__(self):
@@ -32,7 +37,7 @@ move_timer = Timer()
 # Initialize the motors.
 left_motor = Motor(Port.A)
 right_motor = Motor(Port.D)
-gyro = GyroSensor(Port.S2)
+gyro = None
 # Initialize the color sensor.
 line_sensor = ColorSensor(Port.S4)
 line_sensor2 = ColorSensor(Port.S3)
@@ -41,9 +46,9 @@ color = ColorSensor(Port.S1)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=130)
 
 # Calculate the light threshold. Choose values based on your measurements.
-BLACK = 11
-WHITE = 72
-threshold = (BLACK + WHITE) / 2
+BLACK = 78
+WHITE = 10
+threshold = 48
 direction = 0
 
 def sign(x):
@@ -102,11 +107,10 @@ i = 0
 # Cas posledniho vypoctu PID
 last_time = move_timer.now() 
     
-last_error = 0
-error = 0
-k_i = 0.8
-k_p = 0.8
-k_d = 1
+
+
+k_p = 0.5
+
 first_time = True
 
 def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool, first_time:bool):
@@ -117,41 +121,23 @@ def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool
         global k_i
         global k_p 
         global k_d
+        global line_sensor
         global line_sensor2
         global tirst_time
         global move_timer
         global last_time
         global last_error
+        global treshold
         # Calculate the deviation from the threshold.
-        error1 = line_sensor.reflection() - threshold
-        error2 = line_sensor2.reflection() - threshold
-        error = (error1 + error2)/2
+        p1 = line_sensor.reflection() - threshold
+        p2 = line_sensor2.reflection() - threshold
+        P = (p1 - p2)
         print(value, robot.distance())
-        # Calculate the turn rate.
-        p = k_p * error
-        i = i = i + (move_timer.now() - last_time) * (error + last_error) / 2 * k_i 
-        try:
-            d = ((error - last_error) / (move_timer.now() - last_time)) * k_d 
-        except:
-            d = 0
-        # Set the drive base speed and turn rate.
-        last_time = move_timer.now() 
-
-        # Ulozit co je ted za chybu
-        last_error = error 
-            
-        #Omezit I mezi 100 a -100
-        if i > 100:
-            i = 100
-        elif i < -100:
-            i = -100
-
-        pid = p + i + d
-
+       
+        
         if not line:
-            pid = 0
-        robot.drive(speed*10, pid)
-
+            P = 0
+        robot.drive(speed*10, P*k_p)
     # You can wait for a short time or do other things in this loop.
     wait(10)
     if stop:
@@ -452,6 +438,7 @@ def brick_down():
                 if b[0] == 2:
                     end = True
                     attc.run_angle(150, -95, Stop.HOLD, True)
+                    
                     robot.turn(90)
                     brick_count = brick_count + 1
                     
@@ -473,8 +460,11 @@ def brick_down():
                 robot.turn(90)
                 # jestli ma vylozit kabely
                 if b[0] == 3:
+                    go_straight("dist", 10, 10, True, False, None)
                     end = True
                     attc.run_angle(150, -95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, motor.angle() * -1, Stop.HOLD, True)
                     robot.turn(-90)
                     brick_count = brick_count + 1
                     
@@ -484,38 +474,39 @@ def brick_down():
                     attc.run_angle(150, 95, Stop.HOLD, True)
                     robot.turn(-90)
                     brick_count = brick_count + 1
-
+        
         end = False
 
  
 
 
 # -----------------------------JIZDA-----------------------------
-# go_straight("dist", -10, -10, False, False, False)
-# attc.run_angle(150, -95, Stop.HOLD, True)
-# robot.turn(4)
-# go_straight("dist", 21, 10, True, False, False)
+go_straight("dist", -10, -10, False, False, False)
+attc.run_angle(150, -95, Stop.HOLD, True)
+robot.turn(4)
+go_straight("dist", 21, 10, True, False, False)
 
 
-# attc.run_angle(200, 95, Stop.HOLD, True)
+attc.run_angle(200, 95, Stop.HOLD, True)
 
-# go_straight("dist", -17,-10,  True, False, False)
-# robot.turn(-25)
-# attc.run_angle(210, 110, Stop.HOLD, True)
-# go_straight("dist", 15,10,  True, False, False)
-# robot.turn(15)
-# go_straight("dist", 4,10,  True, False, False)
-# attc.run_angle(160, -110, Stop.HOLD, True)
+go_straight("dist", -17,-10,  True, False, False)
+robot.turn(-25)
+attc.run_angle(210, 110, Stop.HOLD, True)
+go_straight("dist", 15,10,  True, False, False)
+robot.turn(15)
+go_straight("dist", 4,10,  True, False, False)
+attc.run_angle(160, -110, Stop.HOLD, True)
 
-# go_straight("dist", -25, -20, True, False, False)
-# robot.turn(100)
+go_straight("dist", -27, -20, True, False, False)
+robot.turn(100)
 
-# go_straight("dist", 102, 50, False, False, False)# value 102
-# robot.turn(-90)
-# brick_down()
-# go_straight("dist", -34, -20, False, False, False)
+go_straight("dist", 110, 50, True, False, False)# value 102
+robot.turn(-90)
+brick_down()
+go_straight("dist", -29, -20, False, False, False)
 
-go_straight("dist", 50, 40, False, True, False)
+
+
 
 
 
