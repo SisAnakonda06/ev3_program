@@ -15,10 +15,7 @@ a = [None, None]
 b = [None, None]
 attc = Motor(Port.B)
 attc2 = Motor(Port.C)
-def restart_motors(motor):
-    """Function for restart motors angle
-        motor - wich motor for restart"""
-        angle = motor.angle() * -1
+
         
 class Timer():
     """Replacement Timer class that allows decimal points so we can measure times of less than one second."""
@@ -109,7 +106,7 @@ last_time = move_timer.now()
     
 
 
-k_p = 0.5
+k_p = 0.8
 
 first_time = True
 
@@ -377,9 +374,9 @@ def brick_down():
     jel = False
     while brick_count < 2:
         print(st, scnd, rd, th)
-        go_straight("dist", brick_dist(brick_count), 10, True, False, None)
+        go_straight("dist", brick_dist(brick_count), 10, True, True, None)
     
-        b = [1, 3]
+        b = [3, 3]
         print("1", end)
         # jak daleko ma jet
         if b[0] == 1 or b[1] == 1 or b[0] == 4 or b[1] == 4 and not end:
@@ -445,7 +442,10 @@ def brick_down():
                 # jesli ma vylozit servery
                 elif b[1] == 2:
                     end = True
-                    attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", 10, 10, True, False, None)
+                    attc.run_angle(150, -95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     robot.turn(90)
                     brick_count = brick_count + 1
                     
@@ -460,11 +460,11 @@ def brick_down():
                 robot.turn(90)
                 # jestli ma vylozit kabely
                 if b[0] == 3:
-                    go_straight("dist", 10, 10, True, False, None)
                     end = True
+                    go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, -95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
-                    attc.run_angle(150, motor.angle() * -1, Stop.HOLD, True)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     robot.turn(-90)
                     brick_count = brick_count + 1
                     
@@ -500,10 +500,10 @@ attc.run_angle(160, -110, Stop.HOLD, True)
 go_straight("dist", -27, -20, True, False, False)
 robot.turn(100)
 
-go_straight("dist", 110, 50, True, False, False)# value 102
+go_straight("dist", 115, 50, True, True, False)# value 102
 robot.turn(-90)
 brick_down()
-go_straight("dist", -29, -20, False, False, False)
+go_straight("dist", -20, -20, False, False, False)
 
 
 
