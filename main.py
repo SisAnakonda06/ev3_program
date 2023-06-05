@@ -391,7 +391,10 @@ def brick_down():
                     # jestli ma vylozit kabel 
                     if b[0] == 1:
                         end = True
+                        go_straight("dist", 10, 10, True, False, None)
                         attc.run_angle(150, -95, Stop.HOLD, True)
+                        go_straight("dist", -1, -10, True, False, None)
+                        attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                         robot.turn(90)
                         brick_count = brick_count + 1
                         pass
@@ -399,6 +402,10 @@ def brick_down():
                     elif b[1] == 1:
                         end = True
                         attc.run_angle(150, 95, Stop.HOLD, True)
+                        go_straight("dist", 10, 10, True, False, None)
+                        attc.run_angle(150, 95, Stop.HOLD, True)
+                        go_straight("dist", -1, -10, True, False, None)
+                        attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                         robot.turn(90)
                         brick_count = brick_count + 1
                         pass
@@ -410,7 +417,10 @@ def brick_down():
                 # jsetli ma vylozit kabeli
                 if b[0] == 4:
                     end = True
+                    go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, -95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     robot.turn(-90)
                     brick_count = brick_count + 1
                     pass
@@ -418,6 +428,10 @@ def brick_down():
                 elif b[1] == 4:
                     end = True
                     attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", 10, 10, True, False, None)
+                    attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     robot.turn(-90)
                     brick_count = brick_count + 1
                     pass
@@ -434,7 +448,10 @@ def brick_down():
                 # jestli ma vylozit kabely
                 if b[0] == 2:
                     end = True
+                    go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, -95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     
                     robot.turn(90)
                     brick_count = brick_count + 1
@@ -443,7 +460,7 @@ def brick_down():
                 elif b[1] == 2:
                     end = True
                     go_straight("dist", 10, 10, True, False, None)
-                    attc.run_angle(150, -95, Stop.HOLD, True)
+                    attc.run_angle(150, 95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     robot.turn(90)
@@ -472,6 +489,10 @@ def brick_down():
                 elif b[1] == 3:
                     end = True
                     attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", 10, 10, True, False, None)
+                    attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
                     robot.turn(-90)
                     brick_count = brick_count + 1
         
