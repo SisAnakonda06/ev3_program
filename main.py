@@ -337,8 +337,7 @@ def get_bricks():
         elif a != [None, None] and b != [None, None]:
                 stop = True
 
-
-            
+         
 
 def bricks():
     while True:
@@ -349,13 +348,37 @@ def bricks():
         #     ev3.speaker.beep()
         print(color.reflection())
         
-def brick_dist(brick_count):
+def brick_dist(brick_count, list):
+    fir_pos = None
+    sec_pos = None
     """Jak daleko ma robot jet aby mohl vylozit kosticky"""
-    
-    if brick_count != 2:
-        return 10
-    elif brick_count == 2:
-        return 14
+    if list[0] == 2 or list[0] == 3:
+        fir_pos = "vzadu"
+    elif list[0] == 1 or list[0] == 4:
+        fir_post == "vpred"
+    if list[1] == 2 or list[1] == 3:
+        sec_pos = "vzadu"
+    elif list[1] == 1 or list[1] == 4:
+        sec_pos = "vpred"
+    routh = [fir_pos, sec_pos]
+    if routh[0] == routh[1]:
+        return 0
+    elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count == 2:
+        robot.turn(180)
+        
+        return [14, -1, -2]
+    elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count == 2:
+        return [14, 1, 1]
+    elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count != 2:
+        return [10, 1, 1]
+    elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count != 2:
+        robot.turn(180)
+        
+        return [25, 1, 1]
+        
+        
+ 
+ 
     
 
 def brick_down():
@@ -372,11 +395,20 @@ def brick_down():
     first = False
     second = False
     jel = False
+    cabel = False
+    server = False
     while brick_count < 2:
+        #pridat podminku pro zvolení listů "a" nebo "b"
         print(st, scnd, rd, th)
-        go_straight("dist", brick_dist(brick_count), 10, True, True, None)
+        vysledek = brick_dist(brick_count, b)
+        dist1 = vysledek[0]
+        turn = vysledek[1]
+        tu_rn= vysledek[2]
+        
+
+        go_straight("dist", dist, 10, True, False, None)
     
-        b = [3, 3]
+        b = [1, 4]
         print("1", end)
         # jak daleko ma jet
         if b[0] == 1 or b[1] == 1 or b[0] == 4 or b[1] == 4 and not end:
@@ -384,56 +416,65 @@ def brick_down():
             # jesli ma jet vpravo
             print(st)
             if b[0] == 1 or b[1] == 1:
+                
                 if not st:
                     print("1  ", st)
                     st = True
-                    robot.turn(-90)
+                    robot.turn(-90 * turn)
                     # jestli ma vylozit kabel 
-                    if b[0] == 1:
+                    if b[0] == 1 and not cabel:
                         end = True
                         go_straight("dist", 10, 10, True, False, None)
                         attc.run_angle(150, -95, Stop.HOLD, True)
                         go_straight("dist", -1, -10, True, False, None)
                         attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+                        go_straight("dist", -9, -10, True, False, None)
                         robot.turn(90)
+                        cabel = True
                         brick_count = brick_count + 1
                         pass
                     # jestli ma vylozit server
-                    elif b[1] == 1:
+                    elif b[1] == 1 and not server:
                         end = True
                         attc.run_angle(150, 95, Stop.HOLD, True)
                         go_straight("dist", 10, 10, True, False, None)
                         attc.run_angle(150, 95, Stop.HOLD, True)
                         go_straight("dist", -1, -10, True, False, None)
                         attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+                        go_straight("dist", -9, -10, True, False, None)
                         robot.turn(90)
                         brick_count = brick_count + 1
-                        pass
+                        server = True
+                      
             # jestli ma jet vlevo
             elif b[0] == 4 or b[1] == 4 and not th:
                 th = True
                 print("4")
-                robot.turn(90)
+                robot.turn(90 * turn)
                 # jsetli ma vylozit kabeli
-                if b[0] == 4:
+                if b[0] == 4 and not cabel:
                     end = True
                     go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, -95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+                    go_straight("dist", -9, -10, True, False, None)
                     robot.turn(-90)
                     brick_count = brick_count + 1
+                    cabel = True
                     pass
                 # jestli ma vylozit servery
-                elif b[1] == 4:
+                elif b[1] == 4 and not server:
                     end = True
                     attc.run_angle(150, 95, Stop.HOLD, True)
                     go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, 95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+                    go_straight("dist", -9, -10, True, False, None)
                     robot.turn(-90)
                     brick_count = brick_count + 1
+                    server = True
                     pass
         # jak daleko ma jet
         print("2", end)
@@ -446,25 +487,28 @@ def brick_down():
                 print("2")
                 robot.turn(-90)
                 # jestli ma vylozit kabely
-                if b[0] == 2:
+                if b[0] == 2 and not cabel:
                     end = True
                     go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, -95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-                    
-                    robot.turn(90)
+                    go_straight("dist", -9, -10, True, False, None)
+                    robot.turn(90 * tu_rn)
                     brick_count = brick_count + 1
+                    cabel = True
                     
                 # jesli ma vylozit servery
-                elif b[1] == 2:
+                elif b[1] == 2 and not server:
                     end = True
                     go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, 95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-                    robot.turn(90)
+                    go_straight("dist", -9, -10, True, False, None)
+                    robot.turn(90 * tu_rn)
                     brick_count = brick_count + 1
+                    server
                     
             # jestli ma jet vpravo
             
@@ -476,55 +520,60 @@ def brick_down():
                 print("90")
                 robot.turn(90)
                 # jestli ma vylozit kabely
-                if b[0] == 3:
+                if b[0] == 3 and not cabel:
                     end = True
                     go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, -95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-                    robot.turn(-90)
+                    go_straight("dist", -9, -10, True, False, None)
+                    robot.turn(-90 * tu_rn1)
                     brick_count = brick_count + 1
+                    cabel = True
                     
                 # jestli ma vlyozit servery
-                elif b[1] == 3:
+                elif b[1] == 3 and not server:
                     end = True
-                    attc.run_angle(150, 95, Stop.HOLD, True)
                     go_straight("dist", 10, 10, True, False, None)
                     attc.run_angle(150, 95, Stop.HOLD, True)
                     go_straight("dist", -1, -10, True, False, None)
                     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-                    robot.turn(-90)
+                    go_straight("dist", -9, -10, True, False, None)
+                    robot.turn(-90 * tu_rn1)
                     brick_count = brick_count + 1
+                    server = True
         
         end = False
-
+    
  
 
 
 # -----------------------------JIZDA-----------------------------
-go_straight("dist", -10, -10, False, False, False)
-attc.run_angle(150, -95, Stop.HOLD, True)
-robot.turn(4)
-go_straight("dist", 21, 10, True, False, False)
+# go_straight("dist", -10, -10, False, False, False)
+# attc.run_angle(150, -95, Stop.HOLD, True)
+# robot.turn(4)
+# go_straight("dist", 21, 10, True, False, False)
 
 
-attc.run_angle(200, 95, Stop.HOLD, True)
+# attc.run_angle(200, 95, Stop.HOLD, True)
 
-go_straight("dist", -17,-10,  True, False, False)
-robot.turn(-25)
-attc.run_angle(210, 110, Stop.HOLD, True)
-go_straight("dist", 15,10,  True, False, False)
-robot.turn(15)
-go_straight("dist", 4,10,  True, False, False)
-attc.run_angle(160, -110, Stop.HOLD, True)
+# go_straight("dist", -17,-10,  True, False, False)
+# robot.turn(-25)
+# attc.run_angle(210, 110, Stop.HOLD, True)
+# go_straight("dist", 15,10,  True, False, False)
+# robot.turn(15)
+# go_straight("dist", 4,10,  True, False, False)
+# attc.run_angle(160, -110, Stop.HOLD, True)
 
-go_straight("dist", -27, -20, True, False, False)
-robot.turn(100)
+# go_straight("dist", -25, -20, True, False, False)
+# robot.turn(100)
 
-go_straight("dist", 115, 50, True, True, False)# value 102
-robot.turn(-90)
+# go_straight("dist", 100, 50, False, True, False)# value 115
+# go_straight("dist", 10, 20, True, True, False)
+
+#robot.turn(-90)
 brick_down()
-go_straight("dist", -20, -20, False, False, False)
+
 
 
 
