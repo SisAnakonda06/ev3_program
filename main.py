@@ -216,8 +216,11 @@ def get_bricks():
     global m_block
     global a
     global b
+    # resetování hodnot robota
     robot.reset()
+    # jízda robota vpřed pro čtení kódu
     robot.drive(100, 0)
+    # inicializace proměných
     b_block = b_block
     m_block = m_block 
     c_white = 0
@@ -236,18 +239,25 @@ def get_bricks():
 
     end_th = end_st * 4
     start_th = end_rd + b_block
-
+    # inicializace barevného senzoru pro čtení kódu 
     color = ColorSensor(Port.S1)
+    # dokud nemá zastavit
     while not stop:
         print(robot.distance())
+        # měření odraženého světla (kvůli kostičkám)
         barva = color.reflection()
         if barva < 20 and barva > 4:
             #print("WA")
+            # čekání na změření odrazeneho svetla
             wait(100)
             #print("IT")
+            # znova mreni odrazeneho svetla
             barva = color.reflection()
+            # pokud vidi cernou
             if (barva < 20 and barva > 2):
                 print("black")
+                # porovnavani ujete vzdalenoti
+                # prvni misto
                 if robot.distance() > start_st and robot.distance() < end_st and not black:
                     
                     ev3 = EV3Brick()
@@ -255,7 +265,7 @@ def get_bricks():
                     c_black =  1
                     black = True
                     print(black)
-                
+                # druhe misto
                 if robot.distance() > start_nd and robot.distance() < end_nd and not black:
         
                     ev3 = EV3Brick()
@@ -263,41 +273,43 @@ def get_bricks():
                     c_black =  2
                     black = True
                     print(black)
-                
+                # treti misto
                 if robot.distance() > start_rd and robot.distance() < end_rd and not black:
                     ev3 = EV3Brick()
                     ev3.speaker.beep()
                     c_black =  3
                     black = True
                     print(black)
-                
+                # ctvrte misto
                 if robot.distance() > start_th and robot.distance() < end_th and not black:
                     ev3 = EV3Brick()
                     ev3.speaker.beep()
                     c_black =  4
                     black = True
                     print(black)
-
+        # pokud vidi bilou
         elif barva > 20 and barva < 100:
             print("white")
+            # porovnavano vzdalenosti
+            # prvni misto
             if robot.distance() > start_st and robot.distance() < end_st and not white:
                 ev3 = EV3Brick()
                 ev3.speaker.beep(100, 100)
                 c_white = 1
                 white = True
-            
+            # druhé misto
             if robot.distance() > start_nd and robot.distance() < end_nd and not white:
                 ev3 = EV3Brick()
                 ev3.speaker.beep(100, 100)
                 c_white = 2
                 white = True
-            
+            # treti misto
             if robot.distance() > start_rd and robot.distance() < end_rd and not white:
                 ev3 = EV3Brick()
                 ev3.speaker.beep(100, 100)
                 c_white = 3 
                 white = True
-            
+            # ctvrte misto
             if robot.distance() > start_th and robot.distance() < end_th and not white:
                 ev3 = EV3Brick()
                 ev3.speaker.beep(100, 100)
@@ -306,9 +318,10 @@ def get_bricks():
 
         print(a, b)
        
-
+        # pokud uz obe barvy videl
         if white == True and black == True:
             print("ahoj")
+            # prekontrolovani a zpsani dat (pokud v "a" neni neco zapsane)
             if a == [None, None] and robot.distance() > 270:
                 print("a")
                 a_white = c_white
@@ -319,7 +332,7 @@ def get_bricks():
                 white = False
                 black = False
                 robot.reset()
-          
+            # pokud neni v "b" neni neco zapsane
             elif b == [None, None]:
                 print("b1")
                 if a != [None, None]:
@@ -335,6 +348,7 @@ def get_bricks():
                         white = False
                         black = False
                         robot.reset()
+        # pokud je v "a" i "b" zapsána hodnota
         elif a != [None, None] and b != [None, None]:
                 stop = True
 
@@ -350,12 +364,15 @@ def bricks():
         print(color.reflection())
         
 def brick_dist(brick_count, list):
+    # inicializace promenych
     fir_pos = None
     sec_pos = None
     print(list)
     """Jak daleko ma robot jet aby mohl vylozit kosticky"""
+    # pokud ma jet nejdrive dozadu 
     if list[0] == 2 or list[0] == 3:
         fir_pos = "vzadu"
+    # pokud ma jet nejdrive dopredu
     elif list[0] == 1 or list[0] == 4:
         print("tadyyyy")
         fir_pos = "vpred"
@@ -363,29 +380,40 @@ def brick_dist(brick_count, list):
     else:
         print("fir err")
         sys.exit()
+    # pokud ma jet potom dozadu
     if list[1] == 2 or list[1] == 3:
         sec_pos = "vzadu"
+    # pokud ma jet potom dopredu
     elif list[1] == 1 or list[1] == 4:
         
         sec_pos = "vpred"
         print(fir_pos)
+    # pokud se stane chyba a data se nezapisou spravne
     else:
         print("sec err")
         sys.exit()
     print(fir_pos)
+    # plan cesty robot pro vykladani
     routh = [fir_pos, sec_pos]
     print(routh)
+    # kdyz jsou cisla vedle sebe (1 a 4 nebo 2 a 3) pri posledni jizde (vykladani posledni veci)
     if routh[0] == routh[1] and brick_count == 1:
         return [0, 1, 1]
+    # pokud pri druhe jizde ma jet dozadu a potom dopredu
     elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count == 1:
-        
         return [14, -1, -2]
+
+    # spatna podminka opravit 
     elif routh[0] == routh[1] and brick_count != 2:
         return [14, 1, 1]
+        
+    # pokud ma jet pri druhem kole dopredu a pak dozadu
     elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count == 1:
         return [14, 1, 1]
+    # pokud ma jet pri prvnim kole dopredu a pak dozadu
     elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count != 1:
         return [10, 1, 1]
+    # pokud ma jet pri prvnim kole dozadu a potom dopredu 
     elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count != 1:
         
         
