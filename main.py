@@ -107,7 +107,7 @@ last_time = move_timer.now()
     
 
 
-k_p = 0.8
+k_p = 0.46 #0.8
 
 first_time = True
 
@@ -596,15 +596,19 @@ def brick_down():
 # go_straight("dist", -25, -20, True, False, False)
 # robot.turn(100)
 
-# go_straight("dist", 100, 50, False, True, False)# value 115
-# go_straight("dist", 10, 20, True, True, False)
+# go_straight("dist", 95, 50, False, True, False)# value 115
+# go_straight("dist", 15, 20, True, True, False)
 
 #robot.turn(-90)
 #brick_down()
 
- go_straight("dist", 60, 30, True, True, False)# value 115
+go_straight("dist", 30, 30, True, True, False)# value 115
+robot.turn(-40)
 
-
+go_straight("dist", 48, 10, True, False, False)# value 115
+robot.turn(30)
+go_straight("dist", -10, -10, True, False, False)
+attc2.run_angle(1000, -1900, Stop.HOLD, True)
 
 
 
