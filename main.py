@@ -11,6 +11,7 @@ from pybricks.tools import wait
 from pybricks.robotics import DriveBase
 from utime import ticks_diff, ticks_ms # type: ignore
 import get_bricks
+import sys
 a = [None, None]
 b = [None, None]
 attc = Motor(Port.B)
@@ -351,30 +352,54 @@ def bricks():
 def brick_dist(brick_count, list):
     fir_pos = None
     sec_pos = None
+    print(list)
     """Jak daleko ma robot jet aby mohl vylozit kosticky"""
     if list[0] == 2 or list[0] == 3:
         fir_pos = "vzadu"
     elif list[0] == 1 or list[0] == 4:
-        fir_post == "vpred"
+        print("tadyyyy")
+        fir_pos = "vpred"
+        print(fir_pos)
+    else:
+        print("fir err")
+        sys.exit()
     if list[1] == 2 or list[1] == 3:
         sec_pos = "vzadu"
     elif list[1] == 1 or list[1] == 4:
+        
         sec_pos = "vpred"
+        print(fir_pos)
+    else:
+        print("sec err")
+        sys.exit()
+    print(fir_pos)
     routh = [fir_pos, sec_pos]
-    if routh[0] == routh[1]:
-        return 0
-    elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count == 2:
-        robot.turn(180)
+    print(routh)
+    if routh[0] == routh[1] and brick_count == 1:
+        return [0, 1, 1]
+    elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count == 1:
         
         return [14, -1, -2]
-    elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count == 2:
+    elif routh[0] == routh[1] and brick_count != 2:
         return [14, 1, 1]
-    elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count != 2:
+    elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count == 1:
+        return [14, 1, 1]
+    elif routh[0] == "vpred" and routh[1] == "vzadu" and brick_count != 1:
         return [10, 1, 1]
-    elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count != 2:
-        robot.turn(180)
+    elif routh[0] == "vzadu" and routh[1] == "vpred" and brick_count != 1:
         
-        return [25, 1, 1]
+        
+        return [25, 1, -2]
+    elif routh[0] == "vpred" and routh[1] == "vzad":
+        return [10, 1, 1]
+    elif routh[0] == None or routh[1] == None:
+        print("NONE err")
+        sys.exit()
+        return None
+    else:
+        print(brick_count)
+        print("err")
+        return None
         
         
  
@@ -400,56 +425,59 @@ def brick_down():
     while brick_count < 2:
         #pridat podminku pro zvolení listů "a" nebo "b"
         print(st, scnd, rd, th)
+        b = [1, 4]
         vysledek = brick_dist(brick_count, b)
-        dist1 = vysledek[0]
+        print(vysledek)
+        dist = vysledek[0]
         turn = vysledek[1]
         tu_rn= vysledek[2]
         
+        if dist != 0:
+            go_straight("dist", dist, 10, True, False, None)
+        else:
+            pass
 
-        go_straight("dist", dist, 10, True, False, None)
-    
-        b = [1, 4]
-        print("1", end)
+ 
         # jak daleko ma jet
         if b[0] == 1 or b[1] == 1 or b[0] == 4 or b[1] == 4 and not end:
             
             # jesli ma jet vpravo
             print(st)
-            if b[0] == 1 or b[1] == 1:
-                
-                if not st:
-                    print("1  ", st)
-                    st = True
-                    robot.turn(-90 * turn)
-                    # jestli ma vylozit kabel 
-                    if b[0] == 1 and not cabel:
-                        end = True
-                        go_straight("dist", 10, 10, True, False, None)
-                        attc.run_angle(150, -95, Stop.HOLD, True)
-                        go_straight("dist", -1, -10, True, False, None)
-                        attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-                        go_straight("dist", -9, -10, True, False, None)
-                        robot.turn(90)
-                        cabel = True
-                        brick_count = brick_count + 1
-                        pass
-                    # jestli ma vylozit server
-                    elif b[1] == 1 and not server:
-                        end = True
-                        attc.run_angle(150, 95, Stop.HOLD, True)
-                        go_straight("dist", 10, 10, True, False, None)
-                        attc.run_angle(150, 95, Stop.HOLD, True)
-                        go_straight("dist", -1, -10, True, False, None)
-                        attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-                        go_straight("dist", -9, -10, True, False, None)
-                        robot.turn(90)
-                        brick_count = brick_count + 1
-                        server = True
+            if (b[0] == 1 or b[1] == 1) and not st:      
+                 
+                st = True
+                print("otočení u 1")
+                robot.turn(-90 * turn)
+                # jestli ma vylozit kabel 
+                if b[0] == 1 and not cabel:
+                    end = True
+                    go_straight("dist", 10, 10, True, False, None)
+                    attc.run_angle(150, -95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+                    go_straight("dist", -9, -10, True, False, None)
+                    robot.turn(90)
+                    cabel = True
+                    brick_count = brick_count + 1
+                    pass
+                # jestli ma vylozit server
+                elif b[1] == 1 and not server:
+                    end = True
+                    attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", 10, 10, True, False, None)
+                    attc.run_angle(150, 95, Stop.HOLD, True)
+                    go_straight("dist", -1, -10, True, False, None)
+                    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+                    go_straight("dist", -9, -10, True, False, None)
+                    robot.turn(90)
+                    brick_count = brick_count + 1
+                    server = True
                       
             # jestli ma jet vlevo
             elif b[0] == 4 or b[1] == 4 and not th:
                 th = True
                 print("4")
+                print("otočení u 4")
                 robot.turn(90 * turn)
                 # jsetli ma vylozit kabeli
                 if b[0] == 4 and not cabel:
@@ -572,9 +600,9 @@ def brick_down():
 # go_straight("dist", 10, 20, True, True, False)
 
 #robot.turn(-90)
-brick_down()
+#brick_down()
 
-
+ go_straight("dist", 60, 30, True, True, False)# value 115
 
 
 
