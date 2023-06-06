@@ -577,6 +577,7 @@ def brick_down():
 
 
 # -----------------------------JIZDA-----------------------------
+
 # go_straight("dist", -10, -10, False, False, False)
 # attc.run_angle(150, -95, Stop.HOLD, True)
 # robot.turn(4)
@@ -603,11 +604,11 @@ def brick_down():
 #brick_down()
 
 go_straight("dist", 30, 30, True, True, False)# value 115
-robot.turn(-40)
+robot.turn(-43)
 
 go_straight("dist", 48, 10, True, False, False)# value 115
 robot.turn(30)
-go_straight("dist", -10, -10, True, False, False)
+go_straight("dist", -7, -10, True, False, False)
 attc2.run_angle(1000, -1900, Stop.HOLD, True)
 
 
