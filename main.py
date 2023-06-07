@@ -65,7 +65,9 @@ def handle_ending_condition(ending_condition, value):
     global gyro
     global start 
     global first_time
-    
+    global line_sensor
+    global line_sensor2
+
     if (first_time == True):
         print(start)
         start = True
@@ -88,8 +90,6 @@ def handle_ending_condition(ending_condition, value):
             first_time = True
             return True 
 
-        
-    return False
     strat = False
 # Set the gain of the proportional line controller. This means that for every
 # percentage point of light deviating from the threshold, we set the turn
@@ -605,39 +605,60 @@ def brick_down():
 
 
 # -----------------------------JIZDA-----------------------------
-
-# go_straight("dist", -10, -10, False, False, False)
-# attc.run_angle(150, -95, Stop.HOLD, True)
-# robot.turn(4)
-# go_straight("dist", 21, 10, True, False, False)
-
-
-# attc.run_angle(200, 95, Stop.HOLD, True)
-
-# go_straight("dist", -17,-10,  True, False, False)
-# robot.turn(-25)
-# attc.run_angle(210, 110, Stop.HOLD, True)
-# go_straight("dist", 15,10,  True, False, False)
-# robot.turn(15)
-# go_straight("dist", 4,10,  True, False, False)
-# attc.run_angle(160, -110, Stop.HOLD, True)
-
-# go_straight("dist", -25, -20, True, False, False)
-# robot.turn(100)
-
-# go_straight("dist", 95, 50, False, True, False)# value 115
-# go_straight("dist", 15, 20, True, True, False)
-
-#robot.turn(-90)
-#brick_down()
-
-go_straight("dist", 30, 30, True, True, False)# value 115
-robot.turn(-43)
-
-go_straight("dist", 48, 10, True, False, False)# value 115
-robot.turn(30)
-go_straight("dist", -7, -10, True, False, False)
-attc2.run_angle(1000, -1900, Stop.HOLD, True)
+#go_straight("dist", 30, 10, True, False, False)
+get_bricks()
+go_straight("dist", -10, -10, False, False, False)
+attc.run_angle(150, -95, Stop.HOLD, True)
+robot.turn(4)
+go_straight("dist", 21, 10, True, False, False)
 
 
+attc.run_angle(200, 95, Stop.HOLD, True)
 
+go_straight("dist", -17,-10,  True, False, False)
+robot.turn(-25)
+attc.run_angle(210, 110, Stop.HOLD, True)
+go_straight("dist", 15,10,  True, False, False)
+robot.turn(15)
+go_straight("dist", 4,10,  True, False, False)
+attc.run_angle(160, -110, Stop.HOLD, True)
+
+go_straight("dist", -25, -20, True, False, False)
+robot.turn(100)
+
+go_straight("dist", 95, 50, False, True, False)# value 115
+go_straight("dist", 15, 20, True, True, False)
+
+robot.turn(-90)
+brick_down()
+
+go_straight("dist", 30, 10, True, True, False)# value 115
+robot.turn(-30)
+
+go_straight("dist", 50, 10, True, False, False)# value 115
+robot.turn(33)
+attc.run_angle(160, -10, Stop.HOLD, True)
+go_straight("dist", -10, -10, True, False, False)
+attc.run_angle(160, 10, Stop.HOLD, True)
+
+
+robot.turn(95)
+go_straight("dist", 47, 30, True, False, False)
+robot.turn(100)
+go_straight("dist", 50, 20, True, True, False)
+robot.turn(-90)
+brick_down()
+
+go_straight("dist", 50, 20, True, True, False)
+if b[1] == 2 or b[1] == 3:
+    go_straight("dist", -35, -20, True, False, False)
+elif b[1] == 1 or b[1] == 4:
+    go_straight("dist", -20, -20, True, False, False)
+robot.turn(77)
+go_straight("dist", 75, 20, True, False, False)
+robot.turn(40)
+go_straight("dist", -20, -10, True, False, False)
+robot.turn(55)
+go_straight("dist", 55, 20, True, False, False)
+robot.turn(-95)
+go_straight("dist", 55, 20, True, False, False)
