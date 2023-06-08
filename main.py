@@ -111,6 +111,28 @@ k_p = 0.46 #0.8
 
 first_time = True
 
+
+
+
+def turn(angle):
+    # Přepočet úhlu na rychlost motorů
+    speed = angle * 5  # Úprava koeficientu podle potřeby
+
+    # Nastavení rychlostí motorů
+    left_motor.run(speed)
+    right_motor.run(-speed)
+
+    # Nechat robota zatáčet, dokud nedosáhne požadovaného úhlu
+    while left_motor.angle() < angle:
+        pass
+
+    # Zastavení motorů
+    left_motor.stop()
+    right_motor.stop()
+
+
+
+
 def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool, first_time:bool):
 
     print("jede", value, ending_condition, robot.distance())
@@ -349,7 +371,8 @@ def get_bricks():
                         black = False
                         robot.reset()
         # pokud je v "a" i "b" zapsána hodnota
-        elif a != [None, None] and b != [None, None]:
+        elif a != [None, None] and b != [None, None] and robot.distance > 450:
+                robot.brake()
                 stop = True
 
          
