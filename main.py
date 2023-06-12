@@ -18,9 +18,9 @@ attc = Motor(Port.B)
 attc2 = Motor(Port.C)
 # KONSTATNY PRO FUNKCI brick_down()
 CAS_PRO_VYKLADANI = 2000 #MILISEKUNDY
-VZDALENOST_K_VYKLADACIM_MISTUM_1_4 = 12 # CENTIMETR
+VZDALENOST_K_VYKLADACIM_MISTUM_1_4 = 13 # CENTIMETR
 VZDALENOST_K_VYKLADACIM_MISTUM_2_3 = 31 # CENTIMETR
-VZDALENOST_OD_1_4_K_2_3 = 14 # CENTIMETR
+VZDALENOST_OD_1_4_K_2_3 = 20 # CENTIMETR
 VZDALENOST_RAMENE_K_VYKLADANI = 14
 SUPNE_OTACENI_V_ZATACKACH = 95 # STUPNE
 
@@ -439,12 +439,14 @@ def brick_dist(list):
         return [False, False, True, True, True]
     elif list[0] == 1 and list[1] == 4:
         return [False, False, None, True, False]
+    elif list[0] == 2 and list[1] == 1:
+        return [True, False, False, False, False]
     elif list[0] == 2 and list[1] == 3:
         return [True, False, None, True, True]
     elif list[0] == 2 and list[1] == 4:
         return [True, False, False, True, False] # [jede dal, vlevo, dozadu vpravo]
     elif list[0] == 3 and list[1] == 1:
-        return [True, True, False, True, False]
+        return [True, True, False, False, False]
     elif list[0] == 3 and list[1] == 2:
         return [True, True, None, False, True]  
     elif list[0] == 3 and list[1] == 4:
@@ -473,6 +475,7 @@ def brick_down(lsit):
     turn_rate = SUPNE_OTACENI_V_ZATACKACH # stupne k zataceni k vykladani
     distance3 = VZDALENOST_OD_1_4_K_2_3 # vzdalenost z 1,4 k 2,3
     plan_cesty = brick_dist(lsit)
+    print(plan_cesty)
     V1 = plan_cesty[0]
     T1 = plan_cesty[1]
     V2 = plan_cesty[2]
@@ -507,17 +510,17 @@ def brick_down(lsit):
         robot.turn(turn_rate * -1)
         T11 = True
     # vkladani
-    go_straight("dist", down_distance, 10, True, True, None)
-    attc.run_time(-100, CAS_PRO_VYKLADANI, then=Stop.COAST, wait=True)
+    go_straight("dist", down_distance, 10, True, False, None)
+    attc.run_time(-100, CAS_PRO_VYKLADANI, then=Stop.HOLD, wait=True)
     
-    go_straight("dist", -1, -10, True, False, True)
+    go_straight("dist", -2, -10, True, False, True)
     wait(1000)
     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-    go_straight("dist", (down_distance-1)*-1, -10, True, False, None)
+    go_straight("dist", (down_distance-2)*-1, -10, True, False, None)
     if T11:
-        robot.turn(turn_rate)
+        robot.turn(turn_rate-5)
     elif not T11:
-        robot.turn(turn_rate * -1)
+        robot.turn((turn_rate-5) * -1)
     # cesta k dalšim vykladani
     if V2:
         go_straight("dist", distance3, 10, True, True, None)
@@ -528,22 +531,22 @@ def brick_down(lsit):
     # zataceni k dalsimu vykladani
     if T2:
         T22 = False
-        robot.turn(turn_rate)
+        robot.turn(turn_rate-5)
     elif not T2:
         T22 = True
-        robot.turn(turn_rate*-1)
+        robot.turn((turn_rate-5)*-1)
     # vykladani
-    go_straight("dist", down_distance, 10, True, True, None)
-    attc.run_time(-100, CAS_PRO_VYKLADANI, then=Stop.COAST, wait=True)
-    go_straight("dist", -1, -10, True, False, True)
+    go_straight("dist", down_distance, 10, True, False, None)
+    attc.run_time(100, CAS_PRO_VYKLADANI, then=Stop.HOLD, wait=True)
+    go_straight("dist", -2, -10, True, False, True)
     wait(1000)
     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
-    go_straight("dist", (down_distance-1)*-1, -10, True, False, None)
+    go_straight("dist", (down_distance-2)*-1, -10, True, False, None)
     # vraceni zpet na hlavni cestu
     if T22:
-        robot.turn(turn_rate)
+        robot.turn(turn_rate-5)
     elif not T22:
-        robot.turn(turn_rate*-1)
+        robot.turn((turn_rate-5)*-1)
     
     if Bm:
         go_straight("dist", distance2 *-1, -10, True, False, None)
@@ -620,4 +623,5 @@ def brick_down(lsit):
 # robot.turn(-95)
 # go_straight("dist", 55, 20, True, False, False)
 # 1 bila 2 cerna
-brick_down([2,4])
+
+brick_down([4,3])
