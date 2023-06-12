@@ -16,6 +16,14 @@ a = [None, None]
 b = [None, None]
 attc = Motor(Port.B)
 attc2 = Motor(Port.C)
+# KONSTATNY PRO FUNKCI brick_down()
+CAS_PRO_VYKLADANI = 2000 #MILISEKUNDY
+VZDALENOST_K_VYKLADACIM_MISTUM_1_4 = 12 # CENTIMETR
+VZDALENOST_K_VYKLADACIM_MISTUM_2_3 = 31 # CENTIMETR
+VZDALENOST_OD_1_4_K_2_3 = 14 # CENTIMETR
+VZDALENOST_RAMENE_K_VYKLADANI = 14
+SUPNE_OTACENI_V_ZATACKACH = 95 # STUPNE
+
 
         
 class Timer():
@@ -133,8 +141,8 @@ def turn(angle):
 
 
 
-def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool, first_time:bool):
-
+def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool, brake:bool):
+    robot.reset()
     print("jede", value, ending_condition, robot.distance())
     while not handle_ending_condition(ending_condition, value):
         global i
@@ -161,6 +169,11 @@ def go_straight(ending_condition:str, value:int, speed:int, stop:bool, line:bool
     if stop:
         wait(10)
         robot.stop()
+        if brake:
+            left_motor.hold()
+            right_motor.hold()
+        elif brake == None or brake == False:
+            pass
 
     print("nejede")
 def turn(ending_condition: int, value: int, max_speed: int, min_speed: int, left: bool, right: bool, precise: bool, stop: bool) -> None:
@@ -406,7 +419,7 @@ def bricks():
         #     ev3.speaker.beep()
         print(color.reflection())
         
-def brick_dist(brick_count, list):
+def brick_dist(list):
     """ ->1 - jak daleko má jet [True-dál(2,3) False-blíž(1,4)]
         ->2 - jestli ma zatocit vpravo nebo vlevo [True-vpravo False-vlevo]
         3 a 4 jsou vždy stejné
@@ -419,7 +432,7 @@ def brick_dist(brick_count, list):
         [1(True-dal(2,3) False-bliz(1,4) ,2(True-vpravo False-vlevo) ,6(True-dopredu False-dozadu) ,7(True-vpravo False-vlevo) ,11(True-dal False-bliz)]
     """
 
-
+    print(list)
     if list[0] == 1 and list[1] == 2:
         return [False, False, True, False, True] # [jede bliz, vlevo, dopredu, vlevo, dal]
     elif list[0] == 1 and list[1] == 3:
@@ -429,7 +442,7 @@ def brick_dist(brick_count, list):
     elif list[0] == 2 and list[1] == 3:
         return [True, False, None, True, True]
     elif list[0] == 2 and list[1] == 4:
-        return [True, False, False, False, False]
+        return [True, False, False, True, False] # [jede dal, vlevo, dozadu vpravo]
     elif list[0] == 3 and list[1] == 1:
         return [True, True, False, True, False]
     elif list[0] == 3 and list[1] == 2:
@@ -448,12 +461,18 @@ def brick_dist(brick_count, list):
     
 
 def brick_down(lsit):
-    distance1 = # vzdalenost k 2,3
-    distance2 = # vzdalenost k 1,4
-    down_distance = # vzdalenost k vykladani 
-    turn_rate = # stupne k zataceni k vykladani
-    distance3 = # vzdalenost z 1,4 k 2,3
-    plan_cesty = brick_dist(list)
+    global CAS_PRO_VYKLADANI
+    global VZDALENOST_K_VYKLADACIM_MISTUM_1_4
+    global VZDALENOST_K_VYKLADACIM_MISTUM_2_3
+    global VZDALENOST_OD_1_4_K_2_3
+    global VZDALENOST_RAMENE_K_VYKLADANI
+    global SUPNE_OTACENI_V_ZATACKACH
+    distance2 = VZDALENOST_K_VYKLADACIM_MISTUM_2_3 # vzdalenost k 2,3
+    distance1 = VZDALENOST_K_VYKLADACIM_MISTUM_1_4# vzdalenost k 1,4
+    down_distance = VZDALENOST_RAMENE_K_VYKLADANI # vzdalenost k vykladani 
+    turn_rate = SUPNE_OTACENI_V_ZATACKACH # stupne k zataceni k vykladani
+    distance3 = VZDALENOST_OD_1_4_K_2_3 # vzdalenost z 1,4 k 2,3
+    plan_cesty = brick_dist(lsit)
     V1 = plan_cesty[0]
     T1 = plan_cesty[1]
     V2 = plan_cesty[2]
@@ -488,9 +507,11 @@ def brick_down(lsit):
         robot.turn(turn_rate * -1)
         T11 = True
     # vkladani
-    go_straight("dist", down_distance, 10, True, False, None)
-    attc.run_time(-100, 3000, then=Stop.COAST, wait=False)
-    go_straight("dist", -1, 10, True, False, None)
+    go_straight("dist", down_distance, 10, True, True, None)
+    attc.run_time(-100, CAS_PRO_VYKLADANI, then=Stop.COAST, wait=True)
+    
+    go_straight("dist", -1, -10, True, False, True)
+    wait(1000)
     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
     go_straight("dist", (down_distance-1)*-1, -10, True, False, None)
     if T11:
@@ -512,9 +533,10 @@ def brick_down(lsit):
         T22 = True
         robot.turn(turn_rate*-1)
     # vykladani
-    go_straight("dist", down_distance, 10, True, False, None)
-    attc.run_time(-100, 3000, then=Stop.COAST, wait=False)
-    go_straight("dist", -1, 10, True, False, None)
+    go_straight("dist", down_distance, 10, True, True, None)
+    attc.run_time(-100, CAS_PRO_VYKLADANI, then=Stop.COAST, wait=True)
+    go_straight("dist", -1, -10, True, False, True)
+    wait(1000)
     attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
     go_straight("dist", (down_distance-1)*-1, -10, True, False, None)
     # vraceni zpet na hlavni cestu
@@ -526,7 +548,7 @@ def brick_down(lsit):
     if Bm:
         go_straight("dist", distance2 *-1, -10, True, False, None)
     elif not Bm:
-        go_straight("dist", distance*-1, -10, True, False, None)
+        go_straight("dist", distance1*-1, -10, True, False, None)
     
 
 
