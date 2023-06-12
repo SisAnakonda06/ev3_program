@@ -18,9 +18,9 @@ attc = Motor(Port.B)
 attc2 = Motor(Port.C)
 # KONSTATNY PRO FUNKCI brick_down()
 CAS_PRO_VYKLADANI = 2000 #MILISEKUNDY
-VZDALENOST_K_VYKLADACIM_MISTUM_1_4 = 13 # CENTIMETR
-VZDALENOST_K_VYKLADACIM_MISTUM_2_3 = 31 # CENTIMETR
-VZDALENOST_OD_1_4_K_2_3 = 20 # CENTIMETR
+VZDALENOST_K_VYKLADACIM_MISTUM_1_4 = 16 # CENTIMETR
+VZDALENOST_K_VYKLADACIM_MISTUM_2_3 = 27 # CENTIMETR
+VZDALENOST_OD_1_4_K_2_3 = 15 # CENTIMETR
 VZDALENOST_RAMENE_K_VYKLADANI = 14
 SUPNE_OTACENI_V_ZATACKACH = 95 # STUPNE
 
@@ -463,6 +463,7 @@ def brick_dist(list):
     
 
 def brick_down(lsit):
+    print(attc_angle)
     global CAS_PRO_VYKLADANI
     global VZDALENOST_K_VYKLADACIM_MISTUM_1_4
     global VZDALENOST_K_VYKLADACIM_MISTUM_2_3
@@ -515,7 +516,8 @@ def brick_down(lsit):
     
     go_straight("dist", -2, -10, True, False, True)
     wait(1000)
-    attc.run_angle(150, attc.angle() * -1, Stop.HOLD, True)
+    print(attc.angle())
+    attc.run_angle(150, attc.angle() *-1, Stop.HOLD, True)
     go_straight("dist", (down_distance-2)*-1, -10, True, False, None)
     if T11:
         robot.turn(turn_rate-5)
@@ -558,70 +560,65 @@ def brick_down(lsit):
 
 
 # -----------------------------JIZDA-----------------------------
-# attc.run_time(-100, 3000, then=Stop.COAST, wait=False)
-# robot.turn(20)
-# go_straight("dist", 14, 10, True, False, False)
-# robot.turn(-20)
+attc.run_time(-100, 3000, then=Stop.COAST, wait=False)
+robot.turn(20)
+go_straight("dist", 14, 10, True, False, False)
+robot.turn(-20)
 
-# go_straight("dist", 16, 10, True, True, False)
+go_straight("dist", 16, 10, True, True, False)
 
-# get_bricks()
-# go_straight("dist", 6, 10,  True, False, False)
-
-
-
-# attc.run_angle(200, 95, Stop.HOLD, True)
-
-# go_straight("dist", -17,-10,  True, False, False)
-# robot.turn(-20)
-
-# attc.run_angle(210, 120, Stop.HOLD, True)
-# go_straight("dist", 10,10,  True, False, False)
-# robot.turn(15)
-# go_straight("dist", 6,10,  True, False, False)
-# attc.run_angle(160, -110, Stop.HOLD, True)
-
-# go_straight("dist", -25, -20, True, False, False)
-# robot.turn(100)
-
-# go_straight("dist", 95, 50, False, True, False)# value 115
-# go_straight("dist", 25, 20, True, True, False)
-
-# robot.turn(-95)
-# brick_down(b)
-# if b[1] == 2 or b[1] == 3:
-#     go_straight("dist", -35, -20, True, False, False)
-# elif b[1] == 1 or b[1] == 4:
-#     go_straight("dist", -15, -20, True, False, False)
-# robot.turn(95)
-# go_straight("dist", 30, 10, True, True, False)# value 115
-# robot.turn(-31)
-
-# go_straight("dist", 53, 10, True, False, False)# value 115
-# robot.turn(30)
-# attc.run_angle(160, -10, Stop.HOLD, True)
-# go_straight("dist", -10, -10, True, False, False)
-# attc.run_angle(160, 10, Stop.HOLD, True)
+get_bricks()
+go_straight("dist", 6, 10,  True, False, False)
 
 
-# robot.turn(95)
-# go_straight("dist", 47, 30, True, False, False)
-# robot.turn(100)
-# go_straight("dist", 55, 20, True, True, False)
-# robot.turn(-90)
-# brick_down(a)
-# if b[1] == 2 or b[1] == 3:
-#     go_straight("dist", -35, -20, True, False, False)
-# elif b[1] == 1 or b[1] == 4:
-#     go_straight("dist", -10, -20, True, False, False)
-# robot.turn(75)
-# go_straight("dist", 75, 20, True, False, False)
-# robot.turn(40)
-# go_straight("dist", -20, -10, True, False, False)
-# robot.turn(55)
-# go_straight("dist", 55, 20, True, False, False)
-# robot.turn(-95)
-# go_straight("dist", 55, 20, True, False, False)
-# 1 bila 2 cerna
 
-brick_down([4,3])
+attc.run_angle(200, 95, Stop.HOLD, True)
+
+go_straight("dist", -17,-10,  True, False, False)
+robot.turn(-20)
+
+attc.run_angle(210, 120, Stop.HOLD, True)
+go_straight("dist", 10,10,  True, False, False)
+robot.turn(15)
+go_straight("dist", 6,10,  True, False, False)
+attc.run_angle(160, -110, Stop.HOLD, True)
+
+go_straight("dist", -25, -20, True, False, False)
+robot.turn(100)
+attc_angle = attc.angle()
+go_straight("dist", 95, 50, False, True, False)# value 115
+go_straight("dist", 22, 20, True, True, False)
+
+robot.turn(-95)
+brick_down(b)
+
+robot.turn(95)
+go_straight("dist", 30, 10, True, True, False)# value 115
+robot.turn(-32)
+
+go_straight("dist", 49, 10, True, False, False)# value 115
+robot.turn(35)
+robot.turn(-5)
+attc.run_angle(160, -10, Stop.HOLD, True)
+go_straight("dist", -10, -10, True, False, False)
+attc.run_angle(160, 10, Stop.HOLD, True)
+
+
+robot.turn(95)
+go_straight("dist", 50, 30, True, False, False)
+robot.turn(100)
+go_straight("dist", 53, 20, True, True, False)
+robot.turn(-90)
+
+brick_down(a)
+
+robot.turn(75)
+go_straight("dist", 75, 20, True, False, False)
+robot.turn(40)
+go_straight("dist", -20, -10, True, False, False)
+robot.turn(55)
+go_straight("dist", 55, 20, True, False, False)
+robot.turn(-95)
+go_straight("dist", 55, 20, True, False, False)
+
+
