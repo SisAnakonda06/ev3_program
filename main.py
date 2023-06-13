@@ -611,6 +611,7 @@ while not end_p:
         go_straight("dist", -10, -10, True, False, False)
         attc.run_angle(160, 10, Stop.HOLD, True)
 
+        
 
         robot.turn(95)
         go_straight("dist", 50, 30, True, False, False)
